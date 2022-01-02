@@ -52,6 +52,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class CI_Controller {
 
 	/**
+	 * route middleware name
+	 *
+	 * @var	string
+	 */
+	public $middleware;
+
+	/**
 	 * Reference to the CI singleton
 	 *
 	 * @var	object
@@ -72,6 +79,8 @@ class CI_Controller {
 	 */
 	public function __construct()
 	{
+		$this->middleware = $GLOBALS['middleware'];
+
 		self::$instance =& $this;
 
 		// Assign all the class objects that were instantiated by the
@@ -85,6 +94,9 @@ class CI_Controller {
 		$this->load =& load_class('Loader', 'core');
 		$this->load->initialize();
 		log_message('info', 'Controller Class Initialized');
+
+		if ($this->middleware === 'auth')
+			$this->auth();
 	}
 
 	// --------------------------------------------------------------------
@@ -117,5 +129,27 @@ class CI_Controller {
 			->_display();
 
 			exit;
+	}
+
+	public function auth()
+	{
+		$this->load->database();
+
+		$query = $this->db->query('SELECT * FROM users');
+		
+		$resArray = [];
+
+		foreach ($query->result() as $row)
+		{
+				$tempRow['id'] = $row->id;
+				$tempRow['names'] = $row->name;
+				$tempRow['age'] = $row->age;
+
+				array_push($resArray, $tempRow);
+		}
+
+		$this->response($resArray, 200);
+		// $data = array('test'=> 'test');
+		// $this->response($data, 401);
 	}
 }

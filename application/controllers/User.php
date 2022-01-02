@@ -20,18 +20,63 @@ class User extends CI_Controller {
 	 */
 	public function index()
 	{
-		echo 'User Controller index';
+		// echo 'test';
+		$this->load->view('frontend/index.html');
 	}
 
 	public function test()
 	{
-		$data = 'test<html>';
+		$this->load->database();
+
+		$query = $this->db->query('SELECT * FROM users');
 		
+		$resArray = [];
 
-		$data = $this->security->xss_clean($data);
+		foreach ($query->result() as $row)
+		{
+				$tempRow['id'] = $row->id;
+				$tempRow['name'] = $row->name;
+				$tempRow['age'] = $row->age;
 
-		$res = array('status' => $data);
+				array_push($resArray, $tempRow);
+		}
 
-		$this->response($res, 200);
+		$this->response($resArray, 200);
+		// $data = $this->security->xss_clean($data);
+
+		// $res = array('status' => $data);
+
+		// $this->response($res, 200);
+	}
+
+	public function getUserInfo($userId)
+	{
+		$data = array('id' => $userId, 'name' => 'choikt', 'age' => 27);
+
+		$this->response($data, 200);
+	}
+
+	public function putUser($userId)
+	{
+		$data = array(
+			'method' => 'put',
+			'userId' => $userId
+		);
+
+		$this->response($data, 200);
+	}
+
+	public function getUserBoardList($userId)
+	{
+		$data = array('userId' => $userId, 'boardList' => []);
+
+		$this->response($data, 200);
+	}
+
+	public function getUserBoardInfo($userId, $boardId)
+	{
+		$data = array('id' => $userId, 'boardId' => $boardId);
+
+		$this->response($data, 200);
 	}
 }

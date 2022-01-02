@@ -385,6 +385,13 @@ class CI_Router {
 				if (isset($val[$http_verb]))
 				{
 					$val = $val[$http_verb];
+
+					if (is_array($val)) {
+						$middleware = isset($val[1]) ? $val[1] : null;
+						$val = $val[0];
+
+						$GLOBALS['middleware'] = $middleware;
+					}
 				}
 				else
 				{
